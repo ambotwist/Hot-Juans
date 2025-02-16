@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://dyaottdms58w8"]
+
+[ext_resource type="Texture2D" uid="uid://1v0s58xnn7c3" path="res://Assets/Full_Garden_Game/Plants/Chili_GrowthStages.png" id="1_7xflt"]
+
+[node name="Pepper" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="ChiliGrowthStages" type="Sprite2D" parent="."]
+texture = ExtResource("1_7xflt")
+hframes = 5

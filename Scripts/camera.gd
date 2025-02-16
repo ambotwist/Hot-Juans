@@ -16,7 +16,7 @@ var start_distance
 # Original zoom value
 var start_zoom
 
-# Fires off whenever an event happens
+# Called whenever an event is registered
 func _input(event):
 	# Touch
 	if event is InputEventScreenTouch:
