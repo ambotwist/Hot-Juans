@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=4 uid="uid://m5swovxkriso"]
+[gd_scene load_steps=36 format=4 uid="uid://m5swovxkriso"]
 
 [ext_resource type="Texture2D" uid="uid://d3lxunmbm2dpw" path="res://Assets/Full_Garden_Game/GrassAndTiles/Grass_Layer.png" id="1_utob2"]
 [ext_resource type="Texture2D" uid="uid://pprdlvskmvq8" path="res://Assets/Full_Garden_Game/GrassAndTiles/Crop_Layer.png" id="2_3y1in"]
@@ -14,6 +14,10 @@
 [ext_resource type="Texture2D" uid="uid://bjaf7pq5ia1yr" path="res://Assets/Full_Garden_Game/GrassAndTiles/GreenGrass/GTO_TR2.png" id="11_60bmo"]
 [ext_resource type="Texture2D" uid="uid://c2tqt3ldjtb7h" path="res://Assets/Full_Garden_Game/GrassAndTiles/GreenGrass/GTO_TL1.png" id="12_ap8ux"]
 [ext_resource type="Texture2D" uid="uid://j6nqnlcy6p2e" path="res://Assets/Full_Garden_Game/GrassAndTiles/GreenGrass/GTO_TL2.png" id="13_evlbc"]
+[ext_resource type="Texture2D" uid="uid://bxp0v2pmmokwh" path="res://Assets/Full_Garden_Game/UiMenu/UiBanner1.png" id="15_0rea0"]
+[ext_resource type="Texture2D" uid="uid://crpwjsql3tu4s" path="res://Assets/Full_Garden_Game/UiMenu/SeedPacks_Sheet.png" id="16_kkgp4"]
+[ext_resource type="Texture2D" uid="uid://djoairj8qc7dv" path="res://Assets/Full_Garden_Game/UiMenu/Particle_Coin.png" id="17_tvv0l"]
+[ext_resource type="Texture2D" uid="uid://cp3raiq5ttl5q" path="res://Assets/Full_Garden_Game/UiMenu/UiButton_Settings.png" id="18_1rdtk"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jdr6x"]
 texture = ExtResource("1_utob2")
@@ -128,6 +132,13 @@ sources/9 = SubResource("TileSetAtlasSource_vma6w")
 sources/10 = SubResource("TileSetAtlasSource_b2uvs")
 sources/0 = SubResource("TileSetAtlasSource_1ev18")
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_smnps"]
+atlas = ExtResource("16_kkgp4")
+region = Rect2(755.329, 54.2916, 239.228, 292.39)
+
+[sub_resource type="LabelSettings" id="LabelSettings_fntp4"]
+font_size = 48
+
 [node name="Game" type="Node2D"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
@@ -144,3 +155,97 @@ tile_set = SubResource("TileSet_cqpse")
 [node name="Overlays" type="TileMapLayer" parent="Greenhouse"]
 tile_map_data = PackedByteArray("AAD+//7/AQAAAAAAAAD9////AgAAAAAAAAD9/wAAAwAAAAAAAAD+/wEABAAAAAAAAAD//wIABQAAAAAAAAAAAAMABgAAAAAAAAABAAMABwAAAAAAAAACAAEACAAAAAAAAAACAAIACQAAAAAAAAABAAAABAAAAAAAABAAAP//BQAAAAAAABD+/wAACgABAAAAAAD+////CgAAAAAAAAD/////CgACAAAAAAD///7/AAAAAAAAAAD//wAACgAAAAAAAAD//wEACgADAAAAAAAAAAEACgAAAAAAAAAAAAAACgABAAAAAAAAAAIACgABAAAAAAABAAIACgAAAAAAAAABAAEACgACAAAAAAA=")
 tile_set = SubResource("TileSet_1mjow")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="UI" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ActionPanel" type="TextureRect" parent="CanvasLayer/UI"]
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -180.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+texture = ExtResource("15_0rea0")
+expand_mode = 1
+
+[node name="Sack" type="TextureRect" parent="CanvasLayer/UI/ActionPanel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.051
+anchor_top = 0.164286
+anchor_right = 0.231944
+anchor_bottom = 0.879
+offset_left = 0.279999
+offset_right = -40.0
+offset_bottom = -0.0600128
+grow_vertical = 2
+texture = SubResource("AtlasTexture_smnps")
+expand_mode = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TopPanel" type="Control" parent="CanvasLayer/UI"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+
+[node name="GoldContainer" type="Control" parent="CanvasLayer/UI/TopPanel"]
+anchors_preset = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 220.0
+offset_bottom = 100.0
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/UI/TopPanel/GoldContainer"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -30.0
+offset_right = 60.0
+offset_bottom = 30.0
+grow_vertical = 2
+texture = ExtResource("17_tvv0l")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="CanvasLayer/UI/TopPanel/GoldContainer"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 70.0
+offset_top = -33.0
+offset_right = 152.0
+offset_bottom = 34.0
+grow_vertical = 2
+text = "120"
+label_settings = SubResource("LabelSettings_fntp4")
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/UI/TopPanel"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -90.0
+offset_top = -20.0
+offset_right = -30.0
+offset_bottom = 40.0
+grow_horizontal = 0
+grow_vertical = 2
+texture = ExtResource("18_1rdtk")
+expand_mode = 1
