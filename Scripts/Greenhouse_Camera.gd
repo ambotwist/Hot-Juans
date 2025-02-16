@@ -1,6 +1,8 @@
 extends Camera2D
 
 # Export variables to the UI
+@export var max_zoom_in: float = 0.7
+@export var max_zoom_out: float = 3
 @export var zoom_speed: float = 0.1
 @export var pan_speed: float = 1.0
 
@@ -69,7 +71,7 @@ func handle_drag(event: InputEventScreenDrag):
 			# Calculate the zoom value
 			zoom = start_zoom / zoom_factor
 		# Limit the zooom 
-		limit_zoom(zoom, 0.7, 3)
+		limit_zoom(zoom, max_zoom_in, max_zoom_out)
 			
 # Limit the zoom
 func limit_zoom(limited_zoom, min, max):
