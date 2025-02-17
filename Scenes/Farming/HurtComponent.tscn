@@ -1,3 +1,0 @@
-[gd_scene format=3 uid="uid://dnrmbno8d8ov6"]
-
-[node name="HurtComponent" type="Area2D"]

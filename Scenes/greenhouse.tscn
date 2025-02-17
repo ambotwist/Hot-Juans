@@ -16,20 +16,24 @@
 [ext_resource type="Texture2D" uid="uid://c2tqt3ldjtb7h" path="res://Assets/Full_Garden_Game/GrassAndTiles/GreenGrass/GTO_TL1.png" id="13_pt6ef"]
 [ext_resource type="Texture2D" uid="uid://j6nqnlcy6p2e" path="res://Assets/Full_Garden_Game/GrassAndTiles/GreenGrass/GTO_TL2.png" id="14_d4ab4"]
 [ext_resource type="Texture2D" uid="uid://bxp0v2pmmokwh" path="res://Assets/Full_Garden_Game/UiMenu/UiBanner1.png" id="15_cobyn"]
-[ext_resource type="Texture2D" uid="uid://crpwjsql3tu4s" path="res://Assets/Full_Garden_Game/UiMenu/SeedPacks_Sheet.png" id="16_5ccal"]
 [ext_resource type="Texture2D" uid="uid://1v0s58xnn7c3" path="res://Assets/Full_Garden_Game/Plants/Chili_GrowthStages.png" id="16_fsok7"]
 [ext_resource type="Texture2D" uid="uid://djoairj8qc7dv" path="res://Assets/Full_Garden_Game/UiMenu/Particle_Coin.png" id="17_mayt1"]
+[ext_resource type="Texture2D" uid="uid://1u7p50k6x41q" path="res://Assets/Full_Garden_Game/UiMenu/UI_MainMenu_GardenButton.png" id="18_1g7n5"]
 [ext_resource type="Texture2D" uid="uid://cp3raiq5ttl5q" path="res://Assets/Full_Garden_Game/UiMenu/UiButton_Settings.png" id="18_cax0w"]
+[ext_resource type="Texture2D" uid="uid://w623fdk0i4la" path="res://Assets/Full_Garden_Game/UiMenu/UI_MainMenu_DecorButton.png" id="19_cauuw"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jdr6x"]
 texture = ExtResource("2_vwexp")
 texture_region_size = Vector2i(270, 166)
 0:0/0 = 0
+0:0/0/terrain = 0
+0:0/0/custom_data_1 = true
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bbjbj"]
 texture = ExtResource("3_2j7lr")
 texture_region_size = Vector2i(270, 166)
 0:0/0 = 0
+0:0/0/terrain = 0
 0:0/0/custom_data_0 = true
 
 [sub_resource type="TileSet" id="TileSet_cqpse"]
@@ -38,6 +42,8 @@ tile_layout = 5
 tile_size = Vector2i(270, 166)
 custom_data_layer_0/name = "can_place_seeds"
 custom_data_layer_0/type = 1
+custom_data_layer_1/name = "can_place_soil"
+custom_data_layer_1/type = 1
 sources/0 = SubResource("TileSetAtlasSource_jdr6x")
 sources/1 = SubResource("TileSetAtlasSource_bbjbj")
 
@@ -164,10 +170,6 @@ custom_data_layer_0/name = "can_place_seeds"
 custom_data_layer_0/type = 1
 sources/0 = SubResource("TileSetAtlasSource_2ih6k")
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_smnps"]
-atlas = ExtResource("16_5ccal")
-region = Rect2(755.329, 54.2916, 239.228, 292.39)
-
 [sub_resource type="LabelSettings" id="LabelSettings_fntp4"]
 font_size = 48
 
@@ -186,6 +188,7 @@ tile_map_data = PackedByteArray("AAAAAAAAAQAAAAAAAAABAAAAAAAAAAAAAAABAAEAAQAAAAA
 tile_set = SubResource("TileSet_cqpse")
 
 [node name="Overlays" type="TileMapLayer" parent="Map"]
+visible = false
 tile_map_data = PackedByteArray("AAD+//7/AQAAAAAAAAD9////AgAAAAAAAAD9/wAAAwAAAAAAAAD+/wEABAAAAAAAAAD//wIABQAAAAAAAAAAAAMABgAAAAAAAAABAAMABwAAAAAAAAACAAEACAAAAAAAAAACAAIACQAAAAAAAAABAAAABAAAAAAAABAAAP//BQAAAAAAABD+/wAACgABAAAAAAD+////CgAAAAAAAAD/////CgACAAAAAAD///7/AAAAAAAAAAD//wAACgAAAAAAAAD//wEACgADAAAAAAAAAAEACgAAAAAAAAAAAAAACgABAAAAAAAAAAIACgABAAAAAAABAAIACgAAAAAAAAABAAEACgACAAAAAAA=")
 tile_set = SubResource("TileSet_1mjow")
 
@@ -216,19 +219,37 @@ grow_vertical = 0
 texture = ExtResource("15_cobyn")
 expand_mode = 1
 
-[node name="Sack" type="TextureRect" parent="CanvasLayer/UI/ActionPanel"]
+[node name="Sack" type="TextureButton" parent="CanvasLayer/UI/ActionPanel"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.051
-anchor_top = 0.164286
-anchor_right = 0.231944
-anchor_bottom = 0.879
+anchor_left = 0.230167
+anchor_top = 0.221143
+anchor_right = 0.331556
+anchor_bottom = 0.800429
 offset_left = 0.279999
-offset_right = -40.0
+offset_top = 0.0400391
+offset_right = 0.279678
 offset_bottom = -0.0600128
 grow_vertical = 2
-texture = SubResource("AtlasTexture_smnps")
-expand_mode = 1
+texture_normal = ExtResource("18_1g7n5")
+ignore_texture_size = true
+stretch_mode = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="Editor" type="TextureButton" parent="CanvasLayer/UI/ActionPanel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.086
+anchor_top = 0.25
+anchor_right = 0.183
+anchor_bottom = 0.821
+offset_left = 0.079998
+offset_top = 1.52588e-05
+offset_right = 0.23999
+offset_bottom = 0.0600128
+texture_normal = ExtResource("19_cauuw")
+ignore_texture_size = true
+stretch_mode = 0
 metadata/_edit_use_anchors_ = true
 
 [node name="TopPanel" type="Control" parent="CanvasLayer/UI"]
@@ -285,3 +306,6 @@ grow_horizontal = 0
 grow_vertical = 2
 texture = ExtResource("18_cax0w")
 expand_mode = 1
+
+[connection signal="pressed" from="CanvasLayer/UI/ActionPanel/Sack" to="." method="_on_plant_seeds_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/ActionPanel/Editor" to="." method="_on_editor_pressed"]
