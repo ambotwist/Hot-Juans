@@ -39,6 +39,8 @@ func handle_touch(event: InputEventScreenTouch):
 			plant_seeds(tile_position)
 		if tap_mode_state == TAP_MODES.TILES:
 			lay_soil(tile_position)
+		else:
+			harvest_crop(tile_position)
 
 # Lays down the seeds in given tile position and initiates the growth phase
 func plant_seeds(tile_position):
@@ -87,14 +89,36 @@ func retrieve_custom_data(tile_position, custom_data_name, tile_layer):
 	else:
 		return false
 
+# Handles the plant seeds button press
 func _on_plant_seeds_pressed() -> void:
-	tap_mode_state = TAP_MODES.SEEDS
+	# Toggle the tap mode state
+	if tap_mode_state == TAP_MODES.NONE:
+		tap_mode_state = TAP_MODES.SEEDS
+	else:
+		tap_mode_state = TAP_MODES.NONE
 
-
+# Handles the lay soil button press
 func _on_editor_pressed() -> void:
-	tap_mode_state = TAP_MODES.TILES
+	# Toggle the tap mode state
+	if tap_mode_state == TAP_MODES.NONE:
+		tap_mode_state = TAP_MODES.TILES
+	else:
+		tap_mode_state = TAP_MODES.NONE
 
 # Checks if the given tile position is valid (inbound)
 func is_valid_tile_position(tile_position: Vector2i) -> bool:
 	var map_rect = base_map.get_used_rect()
 	return map_rect.has_point(tile_position)
+
+# Harvests the crop at the given tile position if it's ready
+func harvest_crop(tile_position: Vector2i) -> void:
+	# Get the crop at this position
+	for crop in get_children():
+		if crop is Crop and crop.tile_position == tile_position:
+			# Check if crop is ready for harvest
+			if crop.is_ready_for_harvest():
+				# Clear the tile in the crops map
+				crops_map.erase_cell(tile_position)
+				# Remove the crop node
+				crop.queue_free()
+				return

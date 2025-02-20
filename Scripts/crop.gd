@@ -13,6 +13,9 @@ signal growth_complete
 # Tracks the current stage of growth (0 = seed, max = fully grown)
 var current_growth_stage: int = 0
 
+# Tracks if the crop is ready to be harvested
+var is_harvestable: bool = false
+
 func _init(new_tile_position: Vector2i) -> void:
 	self.tile_position = new_tile_position
 
@@ -43,6 +46,8 @@ func grow_next_stage() -> void:
 	if current_growth_stage >= crop_data.max_growth_stage:
 		# Notify any listeners that growth is complete
 		growth_complete.emit()
+		# Mark the crop as ready for harvest
+		is_harvestable = true
 		return
 		
 	# Increment the growth stage counter
@@ -51,3 +56,7 @@ func grow_next_stage() -> void:
 	await get_tree().create_timer(crop_data.growth_time).timeout
 	# Progress to the next growth stage
 	grow_next_stage()
+
+# Returns true if the crop has completed its growth and can be harvested
+func is_ready_for_harvest() -> bool:
+	return is_harvestable
