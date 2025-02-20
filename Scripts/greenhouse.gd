@@ -14,11 +14,12 @@ enum TAP_MODES {NONE, SEEDS, TILES, WATER, HARVEST}
 # Default tap mode
 var tap_mode_state = TAP_MODES.NONE
 
-const CROP_DATA_PATH = "res://Resources/chili.tres"
-var crop_data_resource = preload(CROP_DATA_PATH)
+var crop_data_resource = preload("res://Resources/chili.tres")
 
 const SOIL_TILE_ID = 1
 const SOIL_ATLAS_COORD = Vector2i(0, 0)
+
+var planted_crops = {}
 
 # Called whenever an event is registered
 func _input(event):
@@ -35,7 +36,6 @@ func handle_touch(event: InputEventScreenTouch):
 		# Convert world position to tile position
 		var tile_position = base_map.local_to_map(world_position)
 		
-		print(tap_mode_state)
 		
 		if tap_mode_state == TAP_MODES.SEEDS:
 			plant_seeds(tile_position)
@@ -47,32 +47,29 @@ func handle_touch(event: InputEventScreenTouch):
 			harvest_crop(tile_position)
 			
 
-# Lays down the seeds in given tile position and initiates the growth phase
+# Plant the seeds in given tile position and initiates the growth phase
 func plant_seeds(tile_position):
-	print("Attempting to plant seeds at ", tile_position)
-	
+
+	# Check if the tile position is valid
 	if !is_valid_tile_position(tile_position):
-		print("Invalid tile position")
 		return
 	
 	# Check if we can place seeds here
 	if !retrieve_custom_data(tile_position, can_place_seeds_custom_data, base_map):
-		print("Cannot place seeds here")
 		return
 		
 	# Check if the given tile already has a plant
-	if crops_map.get_cell_tile_data(tile_position) != null:
-		print("Tile already has a plant")
+	if crops_map.get_cell_tile_data(tile_position) != null or planted_crops.has(tile_position):
 		return
 
-	print("Creating new crop")
+	# Create a new crop instance
 	var new_crop = Crop.new(tile_position)
+
+	# Add the crop as a child of this node
+	add_child(new_crop)
 	
 	# Create a unique copy of the crop data for this crop
 	new_crop.crop_data = crop_data_resource.duplicate()
-	
-	# Add the crop as a child of this node
-	add_child(new_crop)
 	
 	# Setup the crop with reference to crops_map
 	new_crop.setup(crops_map)
@@ -81,8 +78,38 @@ func plant_seeds(tile_position):
 	var initial_atlas_coord = Vector2i(0, 0)
 	crops_map.set_cell(tile_position, 0, initial_atlas_coord)
 
+	# Add the crop to the dictionary
+	planted_crops[tile_position] = new_crop
+
+# Waters the crop at the given position if it exists and needs water
+func water_crop(tile_position: Vector2i) -> void:
+	# Find crop at this position
+	var crop = planted_crops.get(tile_position)
+	if crop is Crop and crop.tile_position == tile_position and crop.crop_data.needs_water:
+		crop.water()
+		# Update the soil appearance in the base map
+		base_map.set_cell(tile_position, SOIL_TILE_ID, Vector2i(1, 0))
+		return
+
+# Harvests the crop at the given tile position if it's ready
+func harvest_crop(tile_position: Vector2i) -> void:
+	# Get the crop at this position
+	var crop = planted_crops.get(tile_position)
+	if crop is Crop and crop.tile_position == tile_position:
+		# Check if crop is ready for harvest
+		if crop.is_ready_for_harvest():
+			# Clear the tile in the crops map
+			crops_map.erase_cell(tile_position)
+			# Remove the crop node
+			crop.queue_free()
+			# Remove the crop from the dictionary
+			planted_crops.erase(tile_position)
+			return
+
+
 # Lays down the soil in given tile position
 func lay_soil(tile_position):
+	# Check if we can place soil here
 	if retrieve_custom_data(tile_position, can_place_soil_custom_data, base_map):
 		base_map.set_cell(tile_position, SOIL_TILE_ID, SOIL_ATLAS_COORD)
 
@@ -134,25 +161,3 @@ func _on_harvest_pressed() -> void:
 func is_valid_tile_position(tile_position: Vector2i) -> bool:
 	var map_rect = base_map.get_used_rect()
 	return map_rect.has_point(tile_position)
-
-# Waters the crop at the given position if it exists and needs water
-func water_crop(tile_position: Vector2i) -> void:
-	print("watering crop")
-	# Find crop at this position
-	for crop in get_children():
-		if crop is Crop and crop.tile_position == tile_position:
-			crop.water()
-			return
-
-# Harvests the crop at the given tile position if it's ready
-func harvest_crop(tile_position: Vector2i) -> void:
-	# Get the crop at this position
-	for crop in get_children():
-		if crop is Crop and crop.tile_position == tile_position:
-			# Check if crop is ready for harvest
-			if crop.is_ready_for_harvest():
-				# Clear the tile in the crops map
-				crops_map.erase_cell(tile_position)
-				# Remove the crop node
-				crop.queue_free()
-				return
