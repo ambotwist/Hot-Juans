@@ -1,39 +1,53 @@
 extends Node2D
 class_name Crop
 
-# Reference to the crop data resource
+# The crop data
 var crop_data: CropData
-var current_stage: int = 0
-var watered: bool = false
 
-@onready var growth_timer: Timer = Timer.new()
-@onready var sprite: Sprite2D = $Sprite2D
+var tile_position: Vector2i
+var crops_map: TileMapLayer
 
-func _ready() -> void:
-	# Ensure we have valid crop data
-	if not crop_data:
-		push_error("Crop instantiated without crop_data!")
+# Signal emitted when the crop reaches its final growth stage
+signal growth_complete
+
+# Tracks the current stage of growth (0 = seed, max = fully grown)
+var current_growth_stage: int = 0
+
+func _init(new_tile_position: Vector2i) -> void:
+	self.tile_position = new_tile_position
+
+func setup(map: TileMapLayer) -> void:
+	self.crops_map = map
+	# Begin the growth cycle as soon as the crop is set up
+	start_growing()
+
+# Initializes the growth process after validating required data
+func start_growing() -> void:
+	# Ensure we have all required references before starting
+	if crop_data == null or crops_map == null:
+		push_error("crop_data or crops_map not set")
 		return
-
-	# Setup growth timer
-	growth_timer.wait_time = crop_data.growth_time
-	growth_timer.timeout.connect(_on_grow)
-	add_child(growth_timer)
-
-	# Initial sprite setup
-	update_appearance()
 	
-	# Start growing if doesn't need water or is already watered
-	if !crop_data.needs_water or watered:
-		growth_timer.start()
+	# Start the first growth stage    
+	grow_next_stage()
 
-func _on_grow() -> void:
-	if current_stage < crop_data.max_growth_stage - 1:
-		current_stage += 1
-		update_appearance()
-		growth_timer.start()
-
-func update_appearance() -> void:
-	if crop_data and crop_data.sprite_frames.size() > current_stage:
-		sprite.texture = crop_data.sprite_frames[current_stage]
-		print("Updated crop appearance to stage: ", current_stage) # Debug line
+# Handles the progression of growth stages and updates the visual representation
+func grow_next_stage() -> void:
+	# Calculate the atlas coordinates based on current growth stage
+	# Each stage moves one tile to the right in the atlas (x + 1)
+	var atlas_coord = Vector2i(current_growth_stage, 0)
+	# Update the visual representation on the map
+	crops_map.set_cell(tile_position, 0, atlas_coord)
+	
+	# Check if we've reached the final growth stage
+	if current_growth_stage >= crop_data.max_growth_stage:
+		# Notify any listeners that growth is complete
+		growth_complete.emit()
+		return
+		
+	# Increment the growth stage counter
+	current_growth_stage += 1
+	# Wait for the configured growth time before next stage
+	await get_tree().create_timer(crop_data.growth_time).timeout
+	# Progress to the next growth stage
+	grow_next_stage()

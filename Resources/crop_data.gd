@@ -7,14 +7,11 @@ class_name CropData
 # Number of growth stages for this crop
 @export var max_growth_stage: int = 4
 
-# Does the crop need water to grow
-@export var needs_water: bool = true
-
 # Time between growth stages in seconds
 @export var growth_time: float = 2.0
 
-# Array of textures for each growth stage
-@export var sprite_frames: Array[Texture2D]
+# Does the crop need water to grow
+var needs_water: bool = true
 
-# Description of the crop
-@export var description: String
+# Array of textures for each growth stage
+@export var sprite_frames: AtlasTexture

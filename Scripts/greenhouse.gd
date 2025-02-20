@@ -14,6 +14,12 @@ enum TAP_MODES {NONE, SEEDS, TILES}
 # Default tap mode
 var tap_mode_state = TAP_MODES.NONE
 
+const CROP_DATA_PATH = "res://Resources/chili.tres"
+var crop_data_resource = preload(CROP_DATA_PATH)
+
+const SOIL_TILE_ID = 1
+const SOIL_ATLAS_COORD = Vector2i(0, 0)
+
 # Called whenever an event is registered
 func _input(event):
 	if event is InputEventScreenTouch:
@@ -25,7 +31,7 @@ func handle_touch(event: InputEventScreenTouch):
 	if event.pressed:
 		# Convert screen position to world position (adjusting for camera)
 		var world_position = base_map.get_global_mouse_position()
-		
+
 		# Convert world position to tile position
 		var tile_position = base_map.local_to_map(world_position)
 		
@@ -36,47 +42,38 @@ func handle_touch(event: InputEventScreenTouch):
 
 # Lays down the seeds in given tile position and initiates the growth phase
 func plant_seeds(tile_position):
-
+	if !is_valid_tile_position(tile_position):
+		return
+	
+	# Check if we can place seeds here
+	if !retrieve_custom_data(tile_position, can_place_seeds_custom_data, base_map):
+		return
+		
 	# Check if the given tile already has a plant
 	if crops_map.get_cell_tile_data(tile_position) != null:
 		return
-		
-	# Coordinates of the the (first) atlas region
-	var atlas_coord: Vector2i = Vector2i(0, 0)
-	
-	# Check if the given tile accept seeds 
-	if retrieve_custom_data(tile_position, can_place_seeds_custom_data, base_map):
-		# Start growing the plant
-		grow_plant(tile_position, 0, atlas_coord, 4)
-	
-# Grows plant in given tile position
-func grow_plant(tile_position, level, atlas_coord, final_seed_level):
-	# Id of the tile resource
-	var source_id: int = 0
-	# Show the frame at atlas_coord
-	crops_map.set_cell(tile_position, source_id, atlas_coord)
-	
-	# Await 2 seconds
-	await get_tree().create_timer(1.0).timeout
-	
-	# Check if the current frame is the final growth stage
-	if level == final_seed_level:
-		return
-	else:
-		# Update the frame
-		var new_atlas: Vector2i = Vector2i(atlas_coord.x + 1, atlas_coord.y)
-		# Recursively call the method to handle the next frame
-		grow_plant(tile_position, level + 1, new_atlas, final_seed_level)
 
-#
-func lay_soil(tile_position):
-	# Id of the tile resource
-	var source_id: int = 1
-	# Coordinates of the the (first) atlas region
-	var atlas_coord: Vector2i = Vector2i(0, 0)
-	if retrieve_custom_data(tile_position, can_place_soil_custom_data, base_map):
-		base_map.set_cell(tile_position, source_id, atlas_coord)
+	# Check if the crop data resource is loaded
+	if crop_data_resource == null:
+		push_error("Failed to load crop data from: " + CROP_DATA_PATH)
+		return
+
+	# Create a new crop instance
+	var crop = Crop.new(tile_position)
+
+	# Set the crop data
+	crop.crop_data = crop_data_resource
+
+	# Add the crop as a child of this node (not crops_map)
+	add_child(crop)
 	
+	# Setup the crop with reference to crops_map
+	crop.setup(crops_map)
+
+# Lays down the soil in given tile position
+func lay_soil(tile_position):
+	if retrieve_custom_data(tile_position, can_place_soil_custom_data, base_map):
+		base_map.set_cell(tile_position, SOIL_TILE_ID, SOIL_ATLAS_COORD)
 
 # Retrieves the custom data of the given tile from the given tile layer if any
 func retrieve_custom_data(tile_position, custom_data_name, tile_layer):
@@ -88,8 +85,7 @@ func retrieve_custom_data(tile_position, custom_data_name, tile_layer):
 	if tile_data:
 		return tile_data.get_custom_data(custom_data_name)
 	else:
-		false
-		
+		return false
 
 func _on_plant_seeds_pressed() -> void:
 	tap_mode_state = TAP_MODES.SEEDS
@@ -97,3 +93,8 @@ func _on_plant_seeds_pressed() -> void:
 
 func _on_editor_pressed() -> void:
 	tap_mode_state = TAP_MODES.TILES
+
+# Checks if the given tile position is valid (inbound)
+func is_valid_tile_position(tile_position: Vector2i) -> bool:
+	var map_rect = base_map.get_used_rect()
+	return map_rect.has_point(tile_position)

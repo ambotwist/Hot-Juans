@@ -1,16 +1,15 @@
-[gd_resource type="Resource" script_class="CropData" load_steps=4 format=3 uid="uid://dk20npxtpphxw"]
+[gd_resource type="Resource" script_class="CropData" load_steps=4 format=3 uid="uid://dqmfxhs83eae7"]
 
-[ext_resource type="Script" path="res://Resources/crop_data.gd" id="1_hmipu"]
-[ext_resource type="Texture2D" uid="uid://1v0s58xnn7c3" path="res://Assets/Full_Garden_Game/Plants/Chili_GrowthStages.png" id="2_c033l"]
+[ext_resource type="Script" path="res://Resources/crop_data.gd" id="1_f74c4"]
+[ext_resource type="Texture2D" uid="uid://1v0s58xnn7c3" path="res://Assets/Full_Garden_Game/Plants/Chili_GrowthStages.png" id="2_6wmem"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_xgqbe"]
-atlas = ExtResource("2_c033l")
-region = Rect2(0, 0, 270, 332)
+[sub_resource type="AtlasTexture" id="AtlasTexture_xkfy6"]
+atlas = ExtResource("2_6wmem")
+region = Rect2(270, 332, 0, 0)
 
 [resource]
-script = ExtResource("1_hmipu")
+script = ExtResource("1_f74c4")
 crop_name = "Chili"
 max_growth_stage = 4
-needs_water = true
 growth_time = 2.0
-sprite_frames = Array[Texture2D]([SubResource("AtlasTexture_xgqbe")])
+sprite_frames = SubResource("AtlasTexture_xkfy6")
