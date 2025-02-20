@@ -45,7 +45,7 @@ func handle_touch(event: InputEventScreenTouch):
 		start_zoom = zoom
 	# If there's only a finger or less, set start_distance to 0
 	elif touch_points.size() < 2:
-		start_distance = 0		
+		start_distance = 0
 		
 # Handle drag events
 func handle_drag(event: InputEventScreenDrag):
@@ -74,14 +74,12 @@ func handle_drag(event: InputEventScreenDrag):
 		limit_zoom(zoom, max_zoom_in, max_zoom_out)
 			
 # Limit the zoom
-func limit_zoom(limited_zoom, min, max):
-	if limited_zoom.x < min:
-		zoom.x = min
-	if limited_zoom.y < min:
-		zoom.y = min
-	if limited_zoom.x > max:
-		zoom.x = max
-	if limited_zoom.y > max:
-		zoom.y = max
-	
-	
+func limit_zoom(limited_zoom, min_value, max_value):
+	if limited_zoom.x < min_value:
+		zoom.x = min_value
+	if limited_zoom.y < min_value:
+		zoom.y = min_value
+	if limited_zoom.x > max_value:
+		zoom.x = max_value
+	if limited_zoom.y > max_value:
+		zoom.y = max_value
