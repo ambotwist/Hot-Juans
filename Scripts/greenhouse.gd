@@ -20,6 +20,7 @@ const SOIL_TILE_ID = 1
 const SOIL_ATLAS_COORD = Vector2i(0, 0)
 
 var planted_crops = {}
+var pepper_counter = 0
 
 # Called whenever an event is registered
 func _input(event):
@@ -104,8 +105,13 @@ func harvest_crop(tile_position: Vector2i) -> void:
 			crop.queue_free()
 			# Remove the crop from the dictionary
 			planted_crops.erase(tile_position)
+			# Update the soil appearance in the base map
+			base_map.set_cell(tile_position, SOIL_TILE_ID, Vector2i(0, 0))
+			# Increment the pepper counter by 1
+			pepper_counter += 1
+			# Update the label with the new pepper counter value
+			%Label.text = str(pepper_counter)
 			return
-
 
 # Lays down the soil in given tile position
 func lay_soil(tile_position):

@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=4 uid="uid://m5swovxkriso"]
+[gd_scene load_steps=44 format=4 uid="uid://m5swovxkriso"]
 
 [ext_resource type="Script" path="res://Scripts/camera.gd" id="1_aqxo0"]
 [ext_resource type="Script" path="res://Scripts/greenhouse.gd" id="1_gdbcm"]
@@ -23,6 +23,7 @@
 [ext_resource type="Texture2D" uid="uid://w623fdk0i4la" path="res://Assets/Full_Garden_Game/UiMenu/UI_MainMenu_DecorButton.png" id="19_cauuw"]
 [ext_resource type="Texture2D" uid="uid://dpwrjxhc3mtb8" path="res://Assets/Full_Garden_Game/UiMenu/UI_MainMenu_ToolsButton.png" id="19_ft38k"]
 [ext_resource type="Texture2D" uid="uid://cw1bo4m56xypc" path="res://Assets/Full_Garden_Game/UiMenu/UI_MainMenu_SeedsButton.png" id="20_pv825"]
+[ext_resource type="Texture2D" uid="uid://dfj0plx6wxt1r" path="res://Assets/Full_Garden_Game/Plants/Chili_IdleAnim.png" id="24_rfwtb"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jdr6x"]
 texture = ExtResource("2_vwexp")
@@ -173,6 +174,10 @@ sources/0 = SubResource("TileSetAtlasSource_2ih6k")
 
 [sub_resource type="LabelSettings" id="LabelSettings_fntp4"]
 font_size = 48
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6qbjf"]
+atlas = ExtResource("24_rfwtb")
+region = Rect2(257.658, 226.646, 296.595, 375.105)
 
 [node name="Greenhouse" type="Node2D"]
 script = ExtResource("1_gdbcm")
@@ -341,6 +346,41 @@ grow_horizontal = 0
 grow_vertical = 2
 texture = ExtResource("18_cax0w")
 expand_mode = 1
+
+[node name="GoldContainer" type="Control" parent="CanvasLayer/UI"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 35.0
+offset_top = 1011.0
+offset_right = 235.0
+offset_bottom = 1091.0
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/UI/GoldContainer"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -30.0
+offset_right = 60.0
+offset_bottom = 30.0
+grow_vertical = 2
+texture = SubResource("AtlasTexture_6qbjf")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="CanvasLayer/UI/GoldContainer"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 70.0
+offset_top = -33.0
+offset_right = 152.0
+offset_bottom = 34.0
+grow_vertical = 2
+text = "0
+"
+label_settings = SubResource("LabelSettings_fntp4")
 
 [connection signal="pressed" from="CanvasLayer/UI/ActionPanel/Sack" to="." method="_on_plant_seeds_pressed"]
 [connection signal="pressed" from="CanvasLayer/UI/ActionPanel/Sack2" to="." method="_on_water_pressed"]
