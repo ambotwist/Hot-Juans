@@ -11,5 +11,5 @@ region = Rect2(270, 332, 0, 0)
 script = ExtResource("1_f74c4")
 crop_name = "Chili"
 max_growth_stage = 4
-growth_time = 2.0
+growth_time = 1.0
 sprite_frames = SubResource("AtlasTexture_xkfy6")
