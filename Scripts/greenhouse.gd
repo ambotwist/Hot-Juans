@@ -25,7 +25,7 @@ func handle_touch(event: InputEventScreenTouch):
 	if event.pressed:
 		# Convert screen position to world position (adjusting for camera)
 		var world_position = base_map.get_global_mouse_position()
-		git 
+		
 		# Convert world position to tile position
 		var tile_position = base_map.local_to_map(world_position)
 		
@@ -36,6 +36,10 @@ func handle_touch(event: InputEventScreenTouch):
 
 # Lays down the seeds in given tile position and initiates the growth phase
 func plant_seeds(tile_position):
+
+	# Check if the given tile already has a plant
+	if crops_map.get_cell_tile_data(tile_position) != null:
+		return
 		
 	# Coordinates of the the (first) atlas region
 	var atlas_coord: Vector2i = Vector2i(0, 0)
