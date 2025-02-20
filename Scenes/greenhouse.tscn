@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=4 uid="uid://m5swovxkriso"]
+[gd_scene load_steps=42 format=4 uid="uid://m5swovxkriso"]
 
 [ext_resource type="Script" path="res://Scripts/camera.gd" id="1_aqxo0"]
 [ext_resource type="Script" path="res://Scripts/greenhouse.gd" id="1_gdbcm"]
@@ -21,6 +21,8 @@
 [ext_resource type="Texture2D" uid="uid://1u7p50k6x41q" path="res://Assets/Full_Garden_Game/UiMenu/UI_MainMenu_GardenButton.png" id="18_1g7n5"]
 [ext_resource type="Texture2D" uid="uid://cp3raiq5ttl5q" path="res://Assets/Full_Garden_Game/UiMenu/UiButton_Settings.png" id="18_cax0w"]
 [ext_resource type="Texture2D" uid="uid://w623fdk0i4la" path="res://Assets/Full_Garden_Game/UiMenu/UI_MainMenu_DecorButton.png" id="19_cauuw"]
+[ext_resource type="Texture2D" uid="uid://dpwrjxhc3mtb8" path="res://Assets/Full_Garden_Game/UiMenu/UI_MainMenu_ToolsButton.png" id="19_ft38k"]
+[ext_resource type="Texture2D" uid="uid://cw1bo4m56xypc" path="res://Assets/Full_Garden_Game/UiMenu/UI_MainMenu_SeedsButton.png" id="20_pv825"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jdr6x"]
 texture = ExtResource("2_vwexp")
@@ -241,6 +243,40 @@ ignore_texture_size = true
 stretch_mode = 0
 metadata/_edit_use_anchors_ = true
 
+[node name="Sack2" type="TextureButton" parent="CanvasLayer/UI/ActionPanel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.374611
+anchor_top = 0.221143
+anchor_right = 0.476
+anchor_bottom = 0.800429
+offset_left = 0.279999
+offset_top = 0.0400391
+offset_right = 0.279678
+offset_bottom = -0.0600128
+grow_vertical = 2
+texture_normal = ExtResource("19_ft38k")
+ignore_texture_size = true
+stretch_mode = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="Sack3" type="TextureButton" parent="CanvasLayer/UI/ActionPanel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.512111
+anchor_top = 0.221143
+anchor_right = 0.6135
+anchor_bottom = 0.800429
+offset_left = 0.279999
+offset_top = 0.0400391
+offset_right = 0.279678
+offset_bottom = -0.0600128
+grow_vertical = 2
+texture_normal = ExtResource("20_pv825")
+ignore_texture_size = true
+stretch_mode = 0
+metadata/_edit_use_anchors_ = true
+
 [node name="Editor" type="TextureButton" parent="CanvasLayer/UI/ActionPanel"]
 layout_mode = 1
 anchors_preset = -1
@@ -313,4 +349,6 @@ texture = ExtResource("18_cax0w")
 expand_mode = 1
 
 [connection signal="pressed" from="CanvasLayer/UI/ActionPanel/Sack" to="." method="_on_plant_seeds_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/ActionPanel/Sack2" to="." method="_on_water_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/ActionPanel/Sack3" to="." method="_on_harvest_pressed"]
 [connection signal="pressed" from="CanvasLayer/UI/ActionPanel/Editor" to="." method="_on_editor_pressed"]

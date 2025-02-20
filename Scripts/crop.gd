@@ -20,12 +20,12 @@ func _init(new_tile_position: Vector2i) -> void:
 	self.tile_position = new_tile_position
 
 func setup(map: TileMapLayer) -> void:
+	print("Setting up crop")
 	self.crops_map = map
-	# Begin the growth cycle as soon as the crop is set up
-	start_growing()
 
 # Initializes the growth process after validating required data
 func start_growing() -> void:
+	print("Starting growth process")
 	# Ensure we have all required references before starting
 	if crop_data == null or crops_map == null:
 		push_error("crop_data or crops_map not set")
@@ -36,6 +36,7 @@ func start_growing() -> void:
 
 # Handles the progression of growth stages and updates the visual representation
 func grow_next_stage() -> void:
+	print("Growing stage ", current_growth_stage)
 	# Calculate the atlas coordinates based on current growth stage
 	# Each stage moves one tile to the right in the atlas (x + 1)
 	var atlas_coord = Vector2i(current_growth_stage, 0)
@@ -60,3 +61,9 @@ func grow_next_stage() -> void:
 # Returns true if the crop has completed its growth and can be harvested
 func is_ready_for_harvest() -> bool:
 	return is_harvestable
+
+func water() -> void:
+	if crop_data.needs_water:
+		crop_data.needs_water = false
+		# Start growing after being watered
+		start_growing()
