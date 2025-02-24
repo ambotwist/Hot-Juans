@@ -3,6 +3,7 @@ extends Node2D
 # Get the base and crops map layers
 @onready var base_map: TileMapLayer = $Map/Base
 @onready var crops_map: TileMapLayer = $Map/Crops
+@onready var overlay_map: TileMapLayer = $Map/Overlays
 
 # Base tiles have this property
 var can_place_seeds_custom_data = "can_place_seeds"
@@ -18,6 +19,31 @@ var crop_data_resource = preload("res://Resources/chili.tres")
 
 const SOIL_TILE_ID = 1
 const SOIL_ATLAS_COORD = Vector2i(0, 0)
+const SOIL_OVERLAY_TILE_ID = 1
+const GRASS_OVERLAY_TILE_ID = 0
+
+# Array of possible soil overlay coordinates
+const SOIL_OVERLAY_COORDS = [
+	Vector2i(0, 0),
+	Vector2i(1, 0),
+	Vector2i(2, 0),
+	Vector2i(3, 0)
+]
+
+# Enum for neighbor positions in isometric layout
+enum NEIGHBOR {TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT, TOP_LEFT}
+
+# Dictionary mapping neighbor combinations to possible overlay coordinates
+const GRASS_OVERLAY_COORDS = {
+	"TOP_RIGHT": [Vector2i(2, 0), Vector2i(3, 0)],
+	"BOTTOM_RIGHT": [Vector2i(0, 1), Vector2i(1, 1)],
+	"BOTTOM_LEFT": [Vector2i(2, 1), Vector2i(3, 1)],
+	"TOP_LEFT": [Vector2i(4, 0), Vector2i(5, 0)],
+	"BOTTOM_LEFT_TOP_LEFT": [Vector2i(0, 2), Vector2i(1, 2)],
+	"TOP_RIGHT_TOP_LEFT": [Vector2i(5, 1)],
+	"BOTTOM_LEFT_BOTTOM_RIGHT": [Vector2i(4, 1)],
+	"TOP_RIGHT_BOTTOM_RIGHT": [Vector2i(0, 0), Vector2i(1, 0)]
+}
 
 var planted_crops = {}
 var pepper_counter = 0
@@ -50,7 +76,6 @@ func handle_touch(event: InputEventScreenTouch):
 
 # Plant the seeds in given tile position and initiates the growth phase
 func plant_seeds(tile_position):
-
 	# Check if the tile position is valid
 	if !is_valid_tile_position(tile_position):
 		return
@@ -117,11 +142,113 @@ func harvest_crop(tile_position: Vector2i) -> void:
 func lay_soil(tile_position):
 	# Check if we can place soil here
 	if retrieve_custom_data(tile_position, can_place_soil_custom_data, base_map):
+		# Place the soil in base layer
 		base_map.set_cell(tile_position, SOIL_TILE_ID, SOIL_ATLAS_COORD)
+		
+		# Choose a random overlay coordinate for the soil
+		var random_overlay = SOIL_OVERLAY_COORDS[randi() % SOIL_OVERLAY_COORDS.size()]
+		overlay_map.set_cell(tile_position, SOIL_OVERLAY_TILE_ID, random_overlay)
+		
+		# Update grass overlays for neighboring tiles
+		update_neighboring_grass_overlays(tile_position)
+
+# Updates grass overlays for tiles neighboring a soil tile
+func update_neighboring_grass_overlays(soil_position: Vector2i) -> void:
+	# Define neighbor offsets for isometric diamond-down layout
+	var neighbor_offsets = {
+		NEIGHBOR.TOP_RIGHT: Vector2i(0, -1),
+		NEIGHBOR.BOTTOM_RIGHT: Vector2i(1, 0),
+		NEIGHBOR.BOTTOM_LEFT: Vector2i(0, 1),
+		NEIGHBOR.TOP_LEFT: Vector2i(-1, 0)
+	}
+	
+	print("\nChecking neighbors for soil at position: ", soil_position)
+	
+	# Check each neighboring tile
+	for neighbor_pos in neighbor_offsets:
+		var check_pos = soil_position + neighbor_offsets[neighbor_pos]
+		print("Checking neighbor ", NEIGHBOR.keys()[neighbor_pos], " at position: ", check_pos)
+		
+		# Skip if not a valid tile position
+		if !is_valid_tile_position(check_pos):
+			print("- Invalid tile position")
+			continue
+			
+		# Skip if this neighbor is a soil tile
+		if base_map.get_cell_source_id(check_pos) == SOIL_TILE_ID:
+			print("- Is a soil tile, skipping")
+			continue
+			
+		# Get all soil neighbors for this grass tile
+		var soil_neighbors = get_soil_neighbors(check_pos)
+		print("- Found all soil neighbors: ", soil_neighbors.map(func(n): return NEIGHBOR.keys()[n]))
+		
+		# Update grass overlay based on all soil neighbors
+		update_grass_overlay(check_pos, soil_neighbors)
+
+# Gets a list of directions where soil neighbors exist
+func get_soil_neighbors(grass_position: Vector2i) -> Array:
+	var soil_neighbors = []
+	var neighbor_offsets = {
+		NEIGHBOR.TOP_RIGHT: Vector2i(0, -1),
+		NEIGHBOR.BOTTOM_RIGHT: Vector2i(1, 0),
+		NEIGHBOR.BOTTOM_LEFT: Vector2i(0, 1),
+		NEIGHBOR.TOP_LEFT: Vector2i(-1, 0)
+	}
+	
+	for direction in neighbor_offsets:
+		var check_pos = grass_position + neighbor_offsets[direction]
+		if is_valid_tile_position(check_pos) and base_map.get_cell_source_id(check_pos) == SOIL_TILE_ID:
+			soil_neighbors.append(direction)
+	
+	return soil_neighbors
+
+# Updates the grass overlay based on soil neighbors
+func update_grass_overlay(grass_position: Vector2i, soil_neighbors: Array) -> void:
+	if soil_neighbors.is_empty():
+		print("No soil neighbors for grass at ", grass_position, ", removing overlay")
+		overlay_map.erase_cell(grass_position)
+		return
+		
+	# If more than 2 soil neighbors, remove overlay
+	if soil_neighbors.size() > 2:
+		print("More than 2 soil neighbors at ", grass_position, ", removing overlay")
+		overlay_map.erase_cell(grass_position)
+		return
+		
+	# Generate key for overlay coordinates lookup
+	var key = ""
+	if soil_neighbors.size() == 1:
+		key = NEIGHBOR.keys()[soil_neighbors[0]]
+	elif soil_neighbors.size() == 2:
+		# Sort the neighbors to match our predefined combinations
+		var n1 = NEIGHBOR.keys()[soil_neighbors[0]]
+		var n2 = NEIGHBOR.keys()[soil_neighbors[1]]
+		
+		# Try both combinations
+		key = n1 + "_" + n2
+		if !GRASS_OVERLAY_COORDS.has(key):
+			key = n2 + "_" + n1
+	
+	print("Looking up overlay for key: ", key)
+	
+	# Get possible overlay coordinates for this configuration
+	var possible_coords = GRASS_OVERLAY_COORDS.get(key, [])
+	if !possible_coords.is_empty():
+		# Choose random variation
+		var overlay_coord = possible_coords[randi() % possible_coords.size()]
+		print("Selected overlay coordinates: ", overlay_coord)
+		overlay_map.set_cell(grass_position, GRASS_OVERLAY_TILE_ID, overlay_coord)
+		
+		# Verify the cell was set
+		var placed_cell = overlay_map.get_cell_atlas_coords(grass_position)
+		var placed_id = overlay_map.get_cell_source_id(grass_position)
+		print("Verification - Cell at ", grass_position, ": ID=", placed_id, " Coords=", placed_cell)
+	else:
+		print("No overlay coordinates found for key: ", key)
 
 # Retrieves the custom data of the given tile from the given tile layer if any
 func retrieve_custom_data(tile_position, custom_data_name, tile_layer):
-
 	# Retrieves the tile data
 	var tile_data: TileData = tile_layer.get_cell_tile_data(tile_position)
 	

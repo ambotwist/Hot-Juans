@@ -1,8 +1,9 @@
 extends Camera2D
 
 # Export variables to the UI
-@export var max_zoom_in: float = 0.7
-@export var max_zoom_out: float = 3
+@export var max_zoom_in: float = 5
+@export var max_zoom_out: float = 1.5
+@export var default_zoom: float = 3.0
 @export var zoom_speed: float = 0.1
 @export var pan_speed: float = 1.0
 
@@ -15,6 +16,10 @@ var touch_points: Dictionary = {}
 var start_distance
 # Original zoom value
 var start_zoom
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	zoom = Vector2(default_zoom, default_zoom)
 
 # Called whenever an event is registered
 func _input(event):
@@ -71,7 +76,7 @@ func handle_drag(event: InputEventScreenDrag):
 			# Calculate the zoom value
 			zoom = start_zoom / zoom_factor
 		# Limit the zooom 
-		limit_zoom(zoom, max_zoom_in, max_zoom_out)
+		limit_zoom(zoom, max_zoom_out, max_zoom_in)
 			
 # Limit the zoom
 func limit_zoom(limited_zoom, min_value, max_value):
