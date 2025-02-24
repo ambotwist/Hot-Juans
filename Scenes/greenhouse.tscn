@@ -6,8 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://b8fi8fi6xcwh2" path="res://Assets/Custom_Assets/soil_layer.png" id="4_51tf2"]
 [ext_resource type="Texture2D" uid="uid://ddg7cqx3pfn7k" path="res://Assets/Custom_Assets/Grass_Overlays.png" id="5_85an7"]
 [ext_resource type="Texture2D" uid="uid://h55bsq58bg5d" path="res://Assets/Custom_Assets/soil_overlays.png" id="6_la7to"]
+[ext_resource type="Texture2D" uid="uid://c8clbc68031aq" path="res://Assets/Custom_Assets/chili_growth_stages.png" id="7_v6owh"]
 [ext_resource type="Texture2D" uid="uid://bxp0v2pmmokwh" path="res://Assets/Full_Garden_Game/UiMenu/UiBanner1.png" id="15_cobyn"]
-[ext_resource type="Texture2D" uid="uid://1v0s58xnn7c3" path="res://Assets/Full_Garden_Game/Plants/Chili_GrowthStages.png" id="16_fsok7"]
 [ext_resource type="Texture2D" uid="uid://djoairj8qc7dv" path="res://Assets/Full_Garden_Game/UiMenu/Particle_Coin.png" id="17_mayt1"]
 [ext_resource type="Texture2D" uid="uid://1u7p50k6x41q" path="res://Assets/Full_Garden_Game/UiMenu/UI_MainMenu_GardenButton.png" id="18_1g7n5"]
 [ext_resource type="Texture2D" uid="uid://cp3raiq5ttl5q" path="res://Assets/Full_Garden_Game/UiMenu/UiButton_Settings.png" id="18_cax0w"]
@@ -19,7 +19,7 @@
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_16rof"]
 texture = ExtResource("3_oi5og")
 margins = Vector2i(10, 10)
-texture_region_size = Vector2i(100, 60)
+texture_region_size = Vector2i(400, 240)
 0:0/0 = 0
 0:0/0/z_index = 1
 0:0/0/custom_data_1 = true
@@ -27,8 +27,8 @@ texture_region_size = Vector2i(100, 60)
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3fnto"]
 texture = ExtResource("4_51tf2")
 margins = Vector2i(10, 10)
-separation = Vector2i(11, 0)
-texture_region_size = Vector2i(100, 60)
+separation = Vector2i(12, 0)
+texture_region_size = Vector2i(400, 240)
 0:0/0 = 0
 0:0/0/custom_data_0 = true
 1:0/0 = 0
@@ -36,7 +36,7 @@ texture_region_size = Vector2i(100, 60)
 [sub_resource type="TileSet" id="TileSet_cqpse"]
 tile_shape = 1
 tile_layout = 5
-tile_size = Vector2i(100, 60)
+tile_size = Vector2i(400, 240)
 custom_data_layer_0/name = "can_place_seeds"
 custom_data_layer_0/type = 1
 custom_data_layer_1/name = "can_place_soil"
@@ -49,7 +49,7 @@ sources/1 = SubResource("TileSetAtlasSource_3fnto")
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fxhj4"]
 texture = ExtResource("5_85an7")
 margins = Vector2i(10, 10)
-texture_region_size = Vector2i(120, 80)
+texture_region_size = Vector2i(480, 320)
 0:0/0 = 0
 0:0/0/z_index = 2
 1:0/0 = 0
@@ -85,48 +85,60 @@ texture_region_size = Vector2i(120, 80)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kj4pg"]
 texture = ExtResource("6_la7to")
-margins = Vector2i(19, 19)
-separation = Vector2i(20, 0)
-texture_region_size = Vector2i(102, 62)
+margins = Vector2i(40, 40)
+separation = Vector2i(60, 60)
+texture_region_size = Vector2i(420, 260)
 0:0/0 = 0
+0:0/0/z_index = 1
 1:0/0 = 0
+1:0/0/z_index = 1
 2:0/0 = 0
+2:0/0/z_index = 1
 3:0/0 = 0
+3:0/0/z_index = 1
 4:0/0 = 0
+0:1/0 = 0
+0:1/0/z_index = 1
+1:1/0 = 0
+1:1/0/z_index = 1
+2:1/0 = 0
+2:1/0/z_index = 1
+3:1/0 = 0
+3:1/0/z_index = 1
 
 [sub_resource type="TileSet" id="TileSet_c6ncq"]
 tile_shape = 1
 tile_layout = 5
-tile_size = Vector2i(100, 60)
+tile_size = Vector2i(400, 240)
 sources/0 = SubResource("TileSetAtlasSource_fxhj4")
 sources/1 = SubResource("TileSetAtlasSource_kj4pg")
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2ih6k"]
-texture = ExtResource("16_fsok7")
-texture_region_size = Vector2i(270, 332)
-4:0/0 = 0
-4:0/0/texture_origin = Vector2i(0, 140)
-4:0/0/z_index = 2
-3:0/0 = 0
-3:0/0/texture_origin = Vector2i(0, 140)
-3:0/0/z_index = 2
-2:0/0 = 0
-2:0/0/texture_origin = Vector2i(0, 140)
-2:0/0/z_index = 2
-1:0/0 = 0
-1:0/0/texture_origin = Vector2i(0, 140)
-1:0/0/z_index = 2
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_lnya5"]
+texture = ExtResource("7_v6owh")
+texture_region_size = Vector2i(336, 672)
 0:0/0 = 0
-0:0/0/texture_origin = Vector2i(0, 140)
-0:0/0/z_index = 2
+0:0/0/texture_origin = Vector2i(0, 50)
+0:0/0/z_index = 3
+1:0/0 = 0
+1:0/0/texture_origin = Vector2i(0, 50)
+1:0/0/z_index = 3
+2:0/0 = 0
+2:0/0/texture_origin = Vector2i(0, 50)
+2:0/0/z_index = 3
+3:0/0 = 0
+3:0/0/texture_origin = Vector2i(0, 50)
+3:0/0/z_index = 3
+4:0/0 = 0
+4:0/0/texture_origin = Vector2i(0, 50)
+4:0/0/z_index = 3
 
 [sub_resource type="TileSet" id="TileSet_isfdx"]
 tile_shape = 1
 tile_layout = 5
-tile_size = Vector2i(100, 60)
+tile_size = Vector2i(400, 240)
 custom_data_layer_0/name = "can_place_seeds"
 custom_data_layer_0/type = 1
-sources/0 = SubResource("TileSetAtlasSource_2ih6k")
+sources/0 = SubResource("TileSetAtlasSource_lnya5")
 
 [sub_resource type="LabelSettings" id="LabelSettings_fntp4"]
 font_size = 48
@@ -140,6 +152,9 @@ script = ExtResource("1_gdbcm")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 script = ExtResource("1_aqxo0")
+max_zoom_in = 2.0
+max_zoom_out = 0.3
+default_zoom = 0.7
 can_zoom = true
 can_pan = true
 
@@ -150,6 +165,7 @@ tile_map_data = PackedByteArray("AAD//wAAAQAAAAAAAAD+/wAAAQAAAAAAAAD+////AQAAAAA
 tile_set = SubResource("TileSet_cqpse")
 
 [node name="Overlays" type="TileMapLayer" parent="Map"]
+tile_map_data = PackedByteArray("AAD+////AQABAAAAAAD+/wAAAQABAAAAAAD//wAAAQAAAAAAAAD//wEAAQAAAAAAAAAAAAEAAQADAAAAAAAAAAAAAQADAAAAAAD/////AQABAAAAAAD+/wEAAAAAAAAAAAAAAP//AAAAAAIAAAD///7/AAACAAEAAAD+//7/AAADAAEAAAD9////AAABAAEAAAD9/wAAAAAAAAEAAAD//wIAAAADAAAAAAAAAAIAAAADAAAAAAABAAEAAAAFAAAAAAABAAAAAAAEAAAAAAA=")
 tile_set = SubResource("TileSet_c6ncq")
 
 [node name="Crops" type="TileMapLayer" parent="Map"]

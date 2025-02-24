@@ -115,6 +115,12 @@ func water_crop(tile_position: Vector2i) -> void:
 		crop.water()
 		# Update the soil appearance in the base map
 		base_map.set_cell(tile_position, SOIL_TILE_ID, Vector2i(1, 0))
+		
+		# Get current overlay coordinates and update to watered version
+		var current_overlay = overlay_map.get_cell_atlas_coords(tile_position)
+		if current_overlay != Vector2i(-1, -1): # Check if overlay exists
+			var watered_overlay = Vector2i(current_overlay.x, current_overlay.y + 1)
+			overlay_map.set_cell(tile_position, SOIL_OVERLAY_TILE_ID, watered_overlay)
 		return
 
 # Harvests the crop at the given tile position if it's ready
@@ -162,26 +168,20 @@ func update_neighboring_grass_overlays(soil_position: Vector2i) -> void:
 		NEIGHBOR.TOP_LEFT: Vector2i(-1, 0)
 	}
 	
-	print("\nChecking neighbors for soil at position: ", soil_position)
-	
 	# Check each neighboring tile
 	for neighbor_pos in neighbor_offsets:
 		var check_pos = soil_position + neighbor_offsets[neighbor_pos]
-		print("Checking neighbor ", NEIGHBOR.keys()[neighbor_pos], " at position: ", check_pos)
 		
 		# Skip if not a valid tile position
 		if !is_valid_tile_position(check_pos):
-			print("- Invalid tile position")
 			continue
 			
 		# Skip if this neighbor is a soil tile
 		if base_map.get_cell_source_id(check_pos) == SOIL_TILE_ID:
-			print("- Is a soil tile, skipping")
 			continue
 			
 		# Get all soil neighbors for this grass tile
 		var soil_neighbors = get_soil_neighbors(check_pos)
-		print("- Found all soil neighbors: ", soil_neighbors.map(func(n): return NEIGHBOR.keys()[n]))
 		
 		# Update grass overlay based on all soil neighbors
 		update_grass_overlay(check_pos, soil_neighbors)
@@ -206,13 +206,11 @@ func get_soil_neighbors(grass_position: Vector2i) -> Array:
 # Updates the grass overlay based on soil neighbors
 func update_grass_overlay(grass_position: Vector2i, soil_neighbors: Array) -> void:
 	if soil_neighbors.is_empty():
-		print("No soil neighbors for grass at ", grass_position, ", removing overlay")
 		overlay_map.erase_cell(grass_position)
 		return
 		
 	# If more than 2 soil neighbors, remove overlay
 	if soil_neighbors.size() > 2:
-		print("More than 2 soil neighbors at ", grass_position, ", removing overlay")
 		overlay_map.erase_cell(grass_position)
 		return
 		
@@ -230,22 +228,12 @@ func update_grass_overlay(grass_position: Vector2i, soil_neighbors: Array) -> vo
 		if !GRASS_OVERLAY_COORDS.has(key):
 			key = n2 + "_" + n1
 	
-	print("Looking up overlay for key: ", key)
-	
 	# Get possible overlay coordinates for this configuration
 	var possible_coords = GRASS_OVERLAY_COORDS.get(key, [])
 	if !possible_coords.is_empty():
 		# Choose random variation
 		var overlay_coord = possible_coords[randi() % possible_coords.size()]
-		print("Selected overlay coordinates: ", overlay_coord)
 		overlay_map.set_cell(grass_position, GRASS_OVERLAY_TILE_ID, overlay_coord)
-		
-		# Verify the cell was set
-		var placed_cell = overlay_map.get_cell_atlas_coords(grass_position)
-		var placed_id = overlay_map.get_cell_source_id(grass_position)
-		print("Verification - Cell at ", grass_position, ": ID=", placed_id, " Coords=", placed_cell)
-	else:
-		print("No overlay coordinates found for key: ", key)
 
 # Retrieves the custom data of the given tile from the given tile layer if any
 func retrieve_custom_data(tile_position, custom_data_name, tile_layer):
