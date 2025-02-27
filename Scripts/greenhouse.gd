@@ -10,7 +10,7 @@ var can_place_seeds_custom_data = "can_place_seeds"
 var can_place_soil_custom_data = "can_place_soil"
 
 # Enum for the different modes
-enum TAP_MODES {NONE, SEEDS, TILES, WATER, HARVEST}
+enum TAP_MODES {NONE, SEEDS, TILES}
 
 # Default tap mode
 var tap_mode_state = TAP_MODES.NONE
@@ -63,16 +63,20 @@ func handle_touch(event: InputEventScreenTouch):
 		# Convert world position to tile position
 		var tile_position = base_map.local_to_map(world_position)
 		
+		# First check if there's a crop that needs watering or can be harvested
+		var crop = planted_crops.get(tile_position)
+		if crop is Crop and crop.tile_position == tile_position:
+			if crop.crop_data.needs_water:
+				water_crop(tile_position)
+				return
+			elif crop.is_ready_for_harvest():
+				harvest_crop(tile_position)
+				return
 		
 		if tap_mode_state == TAP_MODES.SEEDS:
 			plant_seeds(tile_position)
 		if tap_mode_state == TAP_MODES.TILES:
 			lay_soil(tile_position)
-		if tap_mode_state == TAP_MODES.WATER:
-			water_crop(tile_position)
-		if tap_mode_state == TAP_MODES.HARVEST:
-			harvest_crop(tile_position)
-			
 
 # Plant the seeds in given tile position and initiates the growth phase
 func plant_seeds(tile_position):
@@ -88,11 +92,17 @@ func plant_seeds(tile_position):
 	if crops_map.get_cell_tile_data(tile_position) != null or planted_crops.has(tile_position):
 		return
 
-	# Create a new crop instance
-	var new_crop = Crop.new(tile_position)
-
+	# Load and instance the Crop scene
+	var crop_scene = preload("res://Scenes/Objects/Crop.tscn")
+	var new_crop = crop_scene.instantiate()
+	
 	# Add the crop as a child of this node
 	add_child(new_crop)
+	
+	# Set up the crop's position and data
+	new_crop.set_tile_position(tile_position)
+	var cell_position = crops_map.map_to_local(tile_position)
+	new_crop.position = cell_position
 	
 	# Create a unique copy of the crop data for this crop
 	new_crop.crop_data = crop_data_resource.duplicate()
@@ -136,8 +146,19 @@ func harvest_crop(tile_position: Vector2i) -> void:
 			crop.queue_free()
 			# Remove the crop from the dictionary
 			planted_crops.erase(tile_position)
-			# Update the soil appearance in the base map
+			
+			# Reset soil to dry state
+			# Set the base soil tile back to dry
 			base_map.set_cell(tile_position, SOIL_TILE_ID, Vector2i(0, 0))
+			
+			# Get current overlay coordinates and update to dry version
+			var current_overlay = overlay_map.get_cell_atlas_coords(tile_position)
+			if current_overlay != Vector2i(-1, -1): # Check if overlay exists
+				# If it's a watered overlay (y > 0), get the dry version
+				if current_overlay.y > 0:
+					var dry_overlay = Vector2i(current_overlay.x, current_overlay.y - 1)
+					overlay_map.set_cell(tile_position, SOIL_OVERLAY_TILE_ID, dry_overlay)
+			
 			# Increment the pepper counter by 1
 			pepper_counter += 1
 			# Update the label with the new pepper counter value
@@ -260,22 +281,6 @@ func _on_editor_pressed() -> void:
 	if tap_mode_state != TAP_MODES.TILES:
 		tap_mode_state = TAP_MODES.TILES
 	elif tap_mode_state == TAP_MODES.TILES:
-		tap_mode_state = TAP_MODES.NONE
-
-# Handles the water button press
-func _on_water_pressed() -> void:
-	# Toggle the tap mode state
-	if tap_mode_state != TAP_MODES.WATER:
-		tap_mode_state = TAP_MODES.WATER
-	elif tap_mode_state == TAP_MODES.WATER:
-		tap_mode_state = TAP_MODES.NONE
-
-# Handles the harvest button press
-func _on_harvest_pressed() -> void:
-	# Toggle the tap mode state
-	if tap_mode_state != TAP_MODES.HARVEST:
-		tap_mode_state = TAP_MODES.HARVEST
-	elif tap_mode_state == TAP_MODES.HARVEST:
 		tap_mode_state = TAP_MODES.NONE
 
 # Checks if the given tile position is valid (inbound)

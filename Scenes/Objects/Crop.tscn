@@ -1,6 +1,22 @@
-[gd_scene load_steps=2 format=3 uid="uid://bvq45eb8p78d0"]
+[gd_scene load_steps=4 format=3 uid="uid://bvq45eb8p78d0"]
 
 [ext_resource type="Script" path="res://Scripts/crop.gd" id="1_6wwwm"]
+[ext_resource type="Texture2D" uid="uid://ca8psud67jsof" path="res://Assets/Custom_Assets/needs_watering.png" id="2_ynk4r"]
+[ext_resource type="Texture2D" uid="uid://dsvpafdsv36sg" path="res://Assets/Custom_Assets/ready_for_harvest.png" id="3_ynk4r"]
 
 [node name="Crop" type="Node2D"]
 script = ExtResource("1_6wwwm")
+
+[node name="WateringIndicator" type="Sprite2D" parent="."]
+visible = false
+z_index = 10
+position = Vector2(-94, -152)
+scale = Vector2(0.674359, 0.674359)
+texture = ExtResource("2_ynk4r")
+
+[node name="HarvestIndicator" type="Sprite2D" parent="."]
+visible = false
+z_index = 10
+position = Vector2(-94, -322)
+scale = Vector2(0.674359, 0.674359)
+texture = ExtResource("3_ynk4r")
