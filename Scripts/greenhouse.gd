@@ -5,6 +5,14 @@ extends Node2D
 @onready var crops_map: TileMapLayer = $Map/Crops
 @onready var overlay_map: TileMapLayer = $Map/Overlays
 
+@onready var chiliCounter = $CanvasLayer/UIMarginContainer/UI/StatsMarginContainer/Stats/ChiliCounterRow/ChiliCounterLabel
+
+# Action bar buttons
+@onready var tile_button = $CanvasLayer/UIMarginContainer/UI/BottomUI/MarginContainer/ActionBar/TileButton
+@onready var plant_button = $CanvasLayer/UIMarginContainer/UI/BottomUI/MarginContainer/ActionBar/PlantButton
+@onready var edit_button = $CanvasLayer/UIMarginContainer/UI/BottomUI/MarginContainer/ActionBar/EditButton
+@onready var done_button = $CanvasLayer/UIMarginContainer/UI/BottomUI/MarginContainer/ActionBar/DoneButton
+
 # Base tiles have this property
 var can_place_seeds_custom_data = "can_place_seeds"
 var can_place_soil_custom_data = "can_place_soil"
@@ -42,11 +50,21 @@ const GRASS_OVERLAY_COORDS = {
 	"BOTTOM_LEFT_TOP_LEFT": [Vector2i(0, 2), Vector2i(1, 2)],
 	"TOP_RIGHT_TOP_LEFT": [Vector2i(5, 1)],
 	"BOTTOM_LEFT_BOTTOM_RIGHT": [Vector2i(4, 1)],
-	"TOP_RIGHT_BOTTOM_RIGHT": [Vector2i(0, 0), Vector2i(1, 0)]
+	"TOP_RIGHT_BOTTOM_RIGHT": [Vector2i(0, 0), Vector2i(1, 0)],
+	"BOTTOM_LEFT_TOP_LEFT_TOP_RIGHT": [Vector2i(2, 2)],
+	"BOTTOM_RIGHT_BOTTOM_LEFT_TOP_LEFT": [Vector2i(3, 2)],
+	"TOP_RIGHT_BOTTOM_RIGHT_BOTTOM_LEFT": [Vector2i(4, 2)],
+	"TOP_LEFT_TOP_RIGHT_BOTTOM_RIGHT": [Vector2i(5, 2)]
 }
 
 var planted_crops = {}
 var pepper_counter = 0
+
+# Called when the node enters the scene tree for the first time
+func _ready():
+	# Ensure the Done button is hidden and disabled at start
+	done_button.visible = false
+	done_button.disabled = true
 
 # Called whenever an event is registered
 func _input(event):
@@ -162,7 +180,7 @@ func harvest_crop(tile_position: Vector2i) -> void:
 			# Increment the pepper counter by 1
 			pepper_counter += 1
 			# Update the label with the new pepper counter value
-			%Label.text = str(pepper_counter)
+			chiliCounter.text = str(pepper_counter)
 			return
 
 # Lays down the soil in given tile position
@@ -226,12 +244,17 @@ func get_soil_neighbors(grass_position: Vector2i) -> Array:
 
 # Updates the grass overlay based on soil neighbors
 func update_grass_overlay(grass_position: Vector2i, soil_neighbors: Array) -> void:
+	print("\nUpdating grass overlay at position: ", grass_position)
+	print("Soil neighbors count: ", soil_neighbors.size())
+	
 	if soil_neighbors.is_empty():
+		print("No soil neighbors, removing overlay")
 		overlay_map.erase_cell(grass_position)
 		return
 		
-	# If more than 2 soil neighbors, remove overlay
-	if soil_neighbors.size() > 2:
+	# If more than 3 soil neighbors, remove overlay
+	if soil_neighbors.size() > 3:
+		print("More than 3 soil neighbors, removing overlay")
 		overlay_map.erase_cell(grass_position)
 		return
 		
@@ -239,22 +262,78 @@ func update_grass_overlay(grass_position: Vector2i, soil_neighbors: Array) -> vo
 	var key = ""
 	if soil_neighbors.size() == 1:
 		key = NEIGHBOR.keys()[soil_neighbors[0]]
-	elif soil_neighbors.size() == 2:
-		# Sort the neighbors to match our predefined combinations
-		var n1 = NEIGHBOR.keys()[soil_neighbors[0]]
-		var n2 = NEIGHBOR.keys()[soil_neighbors[1]]
+		print("Single neighbor key: ", key)
+	elif soil_neighbors.size() == 2 or soil_neighbors.size() == 3:
+		# For 2 or 3 neighbors, try different combinations
+		var direction_names = []
+		for neighbor in soil_neighbors:
+			direction_names.append(NEIGHBOR.keys()[neighbor])
 		
-		# Try both combinations
-		key = n1 + "_" + n2
-		if !GRASS_OVERLAY_COORDS.has(key):
-			key = n2 + "_" + n1
+		print("Direction names: ", direction_names)
+		
+		# Try all possible orderings
+		var found_key = false
+		# Start with original order
+		key = "_".join(direction_names)
+		print("Trying key: ", key)
+		if GRASS_OVERLAY_COORDS.has(key):
+			found_key = true
+			print("Key found in dictionary")
+		else:
+			print("Key not found, trying permutations")
+			# Try different permutations for 2 or 3 neighbors
+			# This is a simple approach - we just try a few common patterns
+			if soil_neighbors.size() == 2:
+				# Just swap the two directions
+				key = direction_names[1] + "_" + direction_names[0]
+				print("Trying swapped key: ", key)
+				if GRASS_OVERLAY_COORDS.has(key):
+					found_key = true
+					print("Swapped key found in dictionary")
+			else: # 3 neighbors
+				# Try some common orderings for 3 neighbors
+				var orderings = [
+					[0, 1, 2],
+					[0, 2, 1],
+					[1, 0, 2],
+					[1, 2, 0],
+					[2, 0, 1],
+					[2, 1, 0]
+				]
+				
+				for order in orderings:
+					var test_key = direction_names[order[0]] + "_" + direction_names[order[1]] + "_" + direction_names[order[2]]
+					print("Trying ordered key: ", test_key)
+					if GRASS_OVERLAY_COORDS.has(test_key):
+						key = test_key
+						found_key = true
+						print("Ordered key found in dictionary")
+						break
+		
+		# If no matching key found, use the first ordering (this shouldn't happen with proper data)
+		if !found_key:
+			print("No matching key found in dictionary")
+			key = "_".join(direction_names)
+	
+	print("Final key: ", key)
+	print("Available keys in dictionary: ", GRASS_OVERLAY_COORDS.keys())
 	
 	# Get possible overlay coordinates for this configuration
 	var possible_coords = GRASS_OVERLAY_COORDS.get(key, [])
+	print("Possible coordinates: ", possible_coords)
+	
 	if !possible_coords.is_empty():
 		# Choose random variation
 		var overlay_coord = possible_coords[randi() % possible_coords.size()]
+		print("Selected overlay coordinate: ", overlay_coord)
 		overlay_map.set_cell(grass_position, GRASS_OVERLAY_TILE_ID, overlay_coord)
+		
+		# Verify the cell was set
+		var placed_cell = overlay_map.get_cell_atlas_coords(grass_position)
+		var placed_id = overlay_map.get_cell_source_id(grass_position)
+		print("Verification - Cell at ", grass_position, ": ID=", placed_id, " Coords=", placed_cell)
+	else:
+		print("No overlay coordinates found for key: ", key)
 
 # Retrieves the custom data of the given tile from the given tile layer if any
 func retrieve_custom_data(tile_position, custom_data_name, tile_layer):
@@ -268,20 +347,57 @@ func retrieve_custom_data(tile_position, custom_data_name, tile_layer):
 		return false
 
 # Handles the plant seeds button press
-func _on_plant_seeds_pressed() -> void:
+func _on_plant_button_pressed() -> void:
 	# Toggle the tap mode state
 	if tap_mode_state != TAP_MODES.SEEDS:
 		tap_mode_state = TAP_MODES.SEEDS
+		_show_done_button()
 	elif tap_mode_state == TAP_MODES.SEEDS:
 		tap_mode_state = TAP_MODES.NONE
+		_hide_done_button()
 
 # Handles the lay soil button press
-func _on_editor_pressed() -> void:
+func _on_tile_button_pressed() -> void:
 	# Toggle the tap mode state
 	if tap_mode_state != TAP_MODES.TILES:
 		tap_mode_state = TAP_MODES.TILES
+		_show_done_button()
 	elif tap_mode_state == TAP_MODES.TILES:
 		tap_mode_state = TAP_MODES.NONE
+		_hide_done_button()
+
+# Handles the done button press
+func _on_done_button_pressed() -> void:
+	tap_mode_state = TAP_MODES.NONE
+	_hide_done_button()
+
+# Shows the done button and hides action buttons
+func _show_done_button() -> void:
+	# Hide action buttons
+	tile_button.visible = false
+	tile_button.disabled = true
+	plant_button.visible = false
+	plant_button.disabled = true
+	edit_button.visible = false
+	edit_button.disabled = true
+	
+	# Show done button
+	done_button.visible = true
+	done_button.disabled = false
+
+# Hides the done button and shows action buttons
+func _hide_done_button() -> void:
+	# Show action buttons
+	tile_button.visible = true
+	tile_button.disabled = false
+	plant_button.visible = true
+	plant_button.disabled = false
+	edit_button.visible = true
+	edit_button.disabled = false
+	
+	# Hide done button
+	done_button.visible = false
+	done_button.disabled = true
 
 # Checks if the given tile position is valid (inbound)
 func is_valid_tile_position(tile_position: Vector2i) -> bool:

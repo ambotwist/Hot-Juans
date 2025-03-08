@@ -1,18 +1,21 @@
-[gd_scene load_steps=24 format=4 uid="uid://m5swovxkriso"]
+[gd_scene load_steps=26 format=4 uid="uid://m5swovxkriso"]
 
-[ext_resource type="Script" path="res://Scripts/camera.gd" id="1_aqxo0"]
-[ext_resource type="Script" path="res://Scripts/greenhouse.gd" id="1_gdbcm"]
+[ext_resource type="Script" uid="uid://dy2aepvh7bevv" path="res://Scripts/camera.gd" id="1_aqxo0"]
+[ext_resource type="Script" uid="uid://sciqwoqrcqqy" path="res://Scripts/greenhouse.gd" id="1_gdbcm"]
 [ext_resource type="Texture2D" uid="uid://be8tun60bmm3y" path="res://Assets/Custom_Assets/grass_layer.png" id="3_oi5og"]
 [ext_resource type="Texture2D" uid="uid://b8fi8fi6xcwh2" path="res://Assets/Custom_Assets/soil_layer.png" id="4_51tf2"]
 [ext_resource type="Texture2D" uid="uid://ddg7cqx3pfn7k" path="res://Assets/Custom_Assets/Grass_Overlays.png" id="5_85an7"]
 [ext_resource type="Texture2D" uid="uid://h55bsq58bg5d" path="res://Assets/Custom_Assets/soil_overlays.png" id="6_la7to"]
 [ext_resource type="Texture2D" uid="uid://c8clbc68031aq" path="res://Assets/Custom_Assets/chili_growth_stages.png" id="7_v6owh"]
-[ext_resource type="Texture2D" uid="uid://bxp0v2pmmokwh" path="res://Assets/Full_Garden_Game/UiMenu/UiBanner1.png" id="15_cobyn"]
-[ext_resource type="Texture2D" uid="uid://djoairj8qc7dv" path="res://Assets/Full_Garden_Game/UiMenu/Particle_Coin.png" id="17_mayt1"]
-[ext_resource type="Texture2D" uid="uid://1u7p50k6x41q" path="res://Assets/Full_Garden_Game/UiMenu/UI_MainMenu_GardenButton.png" id="18_1g7n5"]
-[ext_resource type="Texture2D" uid="uid://cp3raiq5ttl5q" path="res://Assets/Full_Garden_Game/UiMenu/UiButton_Settings.png" id="18_cax0w"]
-[ext_resource type="Texture2D" uid="uid://w623fdk0i4la" path="res://Assets/Full_Garden_Game/UiMenu/UI_MainMenu_DecorButton.png" id="19_cauuw"]
-[ext_resource type="Texture2D" uid="uid://dfj0plx6wxt1r" path="res://Assets/Full_Garden_Game/Plants/Chili_IdleAnim.png" id="24_rfwtb"]
+[ext_resource type="Texture2D" uid="uid://td8xsew31ubb" path="res://Assets/Full_Garden_Game/UiMenu/UiIcon_Coin.png" id="8_1p2o5"]
+[ext_resource type="Script" uid="uid://47n88l75bpvr" path="res://Scripts/ui.gd" id="8_bhnm8"]
+[ext_resource type="Texture2D" uid="uid://mko6njrqlh5e" path="res://Assets/Custom_Assets/Chili_IdleAnim.png" id="10_7a6jw"]
+[ext_resource type="Texture2D" uid="uid://c86w2d4aayt7i" path="res://Assets/Custom_Assets/flower_icon.webp" id="11_670mp"]
+[ext_resource type="Texture2D" uid="uid://blyyna8jmgove" path="res://Assets/Custom_Assets/hoe.png" id="11_wtr4s"]
+[ext_resource type="Texture2D" uid="uid://nvkvcug7ck15" path="res://Assets/Custom_Assets/expedition_icon.png" id="12_r2pc2"]
+[ext_resource type="Texture2D" uid="uid://cnx1pqem2stqr" path="res://Assets/Custom_Assets/sack.png" id="12_rbn75"]
+[ext_resource type="Texture2D" uid="uid://d0t6rgcedtwgy" path="res://Assets/Custom_Assets/market-icon.png" id="13_846dd"]
+[ext_resource type="Texture2D" uid="uid://bpwggleb4hjq1" path="res://Assets/Custom_Assets/blueprint.png" id="13_qyuhc"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_16rof"]
 texture = ExtResource("3_oi5og")
@@ -80,6 +83,10 @@ texture_region_size = Vector2i(480, 320)
 5:1/0/z_index = 2
 4:1/0 = 0
 4:1/0/z_index = 2
+2:2/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+5:2/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kj4pg"]
 texture = ExtResource("6_la7to")
@@ -138,12 +145,9 @@ custom_data_layer_0/name = "can_place_seeds"
 custom_data_layer_0/type = 1
 sources/0 = SubResource("TileSetAtlasSource_lnya5")
 
-[sub_resource type="LabelSettings" id="LabelSettings_fntp4"]
-font_size = 48
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_6qbjf"]
-atlas = ExtResource("24_rfwtb")
-region = Rect2(257.658, 226.646, 296.595, 375.105)
+[sub_resource type="AtlasTexture" id="AtlasTexture_4s15k"]
+atlas = ExtResource("10_7a6jw")
+region = Rect2(271.597, 239.698, 253.19, 329.832)
 
 [node name="Greenhouse" type="Node2D"]
 script = ExtResource("1_gdbcm")
@@ -171,153 +175,186 @@ tile_set = SubResource("TileSet_isfdx")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="UI" type="Control" parent="CanvasLayer"]
-layout_mode = 3
+[node name="UIMarginContainer" type="MarginContainer" parent="CanvasLayer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("8_bhnm8")
 
-[node name="ActionPanel" type="TextureRect" parent="CanvasLayer/UI"]
-custom_minimum_size = Vector2(0, 140)
+[node name="UI" type="Control" parent="CanvasLayer/UIMarginContainer"]
+layout_mode = 2
+
+[node name="StatsMarginContainer" type="MarginContainer" parent="CanvasLayer/UIMarginContainer/UI"]
+custom_minimum_size = Vector2(300, 400)
+layout_mode = 1
+offset_right = 300.0
+offset_bottom = 400.0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+
+[node name="Stats" type="VBoxContainer" parent="CanvasLayer/UIMarginContainer/UI/StatsMarginContainer"]
+layout_mode = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="CoinCounterRow" type="HBoxContainer" parent="CanvasLayer/UIMarginContainer/UI/StatsMarginContainer/Stats"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="CoinCounterImage" type="TextureRect" parent="CanvasLayer/UIMarginContainer/UI/StatsMarginContainer/Stats/CoinCounterRow"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+texture = ExtResource("8_1p2o5")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CoinCounterLabel" type="Label" parent="CanvasLayer/UIMarginContainer/UI/StatsMarginContainer/Stats/CoinCounterRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 68
+text = "0"
+vertical_alignment = 1
+
+[node name="ChiliCounterRow" type="HBoxContainer" parent="CanvasLayer/UIMarginContainer/UI/StatsMarginContainer/Stats"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="ChiliCounterImage" type="TextureRect" parent="CanvasLayer/UIMarginContainer/UI/StatsMarginContainer/Stats/ChiliCounterRow"]
+custom_minimum_size = Vector2(85, 85)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+texture = SubResource("AtlasTexture_4s15k")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ChiliCounterLabel" type="Label" parent="CanvasLayer/UIMarginContainer/UI/StatsMarginContainer/Stats/ChiliCounterRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 68
+text = "0"
+vertical_alignment = 1
+
+[node name="BottomUI" type="VBoxContainer" parent="CanvasLayer/UIMarginContainer/UI"]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -180.0
-offset_bottom = -40.0
+offset_top = -250.0
 grow_horizontal = 2
 grow_vertical = 0
-texture = ExtResource("15_cobyn")
-expand_mode = 1
+alignment = 2
 
-[node name="Sack" type="TextureButton" parent="CanvasLayer/UI/ActionPanel"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.230167
-anchor_top = 0.221143
-anchor_right = 0.331556
-anchor_bottom = 0.800429
-offset_left = 0.279999
-offset_top = 0.0400391
-offset_right = 0.279678
-offset_bottom = -0.0600128
-grow_vertical = 2
-texture_normal = ExtResource("18_1g7n5")
-ignore_texture_size = true
-stretch_mode = 0
-metadata/_edit_use_anchors_ = true
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/UIMarginContainer/UI/BottomUI"]
+layout_mode = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 20
 
-[node name="Editor" type="TextureButton" parent="CanvasLayer/UI/ActionPanel"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.086
-anchor_top = 0.25
-anchor_right = 0.183
-anchor_bottom = 0.821
-offset_left = 0.079998
-offset_top = 1.52588e-05
-offset_right = 0.23999
-offset_bottom = 0.0600128
-texture_normal = ExtResource("19_cauuw")
-ignore_texture_size = true
-stretch_mode = 0
-metadata/_edit_use_anchors_ = true
-
-[node name="TopPanel" type="Control" parent="CanvasLayer/UI"]
+[node name="ActionBar" type="HBoxContainer" parent="CanvasLayer/UIMarginContainer/UI/BottomUI/MarginContainer"]
 custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="TileButton" type="TextureButton" parent="CanvasLayer/UIMarginContainer/UI/BottomUI/MarginContainer/ActionBar"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture_normal = ExtResource("11_wtr4s")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="PlantButton" type="TextureButton" parent="CanvasLayer/UIMarginContainer/UI/BottomUI/MarginContainer/ActionBar"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture_normal = ExtResource("12_rbn75")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="EditButton" type="TextureButton" parent="CanvasLayer/UIMarginContainer/UI/BottomUI/MarginContainer/ActionBar"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture_normal = ExtResource("13_qyuhc")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="DoneButton" type="Button" parent="CanvasLayer/UIMarginContainer/UI/BottomUI/MarginContainer/ActionBar"]
+visible = false
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+disabled = true
+text = "DONE"
+
+[node name="NavBar" type="HBoxContainer" parent="CanvasLayer/UIMarginContainer/UI/BottomUI"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="GardenRect" type="ColorRect" parent="CanvasLayer/UIMarginContainer/UI/BottomUI/NavBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+color = Color(0.651667, 0.92, 0.276, 1)
+
+[node name="FlowerIcon" type="TextureRect" parent="CanvasLayer/UIMarginContainer/UI/BottomUI/NavBar/GardenRect"]
 layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -41.0
+offset_top = -41.0
+offset_right = 39.0
+offset_bottom = 39.0
 grow_horizontal = 2
-
-[node name="GoldContainer" type="Control" parent="CanvasLayer/UI/TopPanel"]
-anchors_preset = 0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 220.0
-offset_bottom = 100.0
-metadata/_edit_use_anchors_ = true
-
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer/UI/TopPanel/GoldContainer"]
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_top = -30.0
-offset_right = 60.0
-offset_bottom = 30.0
 grow_vertical = 2
-texture = ExtResource("17_mayt1")
-expand_mode = 1
-metadata/_edit_use_anchors_ = true
-
-[node name="Label" type="Label" parent="CanvasLayer/UI/TopPanel/GoldContainer"]
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 70.0
-offset_top = -33.0
-offset_right = 152.0
-offset_bottom = 34.0
-grow_vertical = 2
-text = "120"
-label_settings = SubResource("LabelSettings_fntp4")
-metadata/_edit_use_anchors_ = true
-
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer/UI/TopPanel"]
-layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -90.0
-offset_top = -20.0
-offset_right = -30.0
-offset_bottom = 40.0
-grow_horizontal = 0
-grow_vertical = 2
-texture = ExtResource("18_cax0w")
+texture = ExtResource("11_670mp")
 expand_mode = 1
 
-[node name="GoldContainer" type="Control" parent="CanvasLayer/UI"]
-layout_mode = 3
-anchors_preset = 0
-offset_left = 35.0
-offset_top = 1011.0
-offset_right = 235.0
-offset_bottom = 1091.0
+[node name="AdventureRect" type="ColorRect" parent="CanvasLayer/UIMarginContainer/UI/BottomUI/NavBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+color = Color(0.93, 0.71176, 0.1116, 1)
 
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer/UI/GoldContainer"]
+[node name="MapIcon" type="TextureRect" parent="CanvasLayer/UIMarginContainer/UI/BottomUI/NavBar/AdventureRect"]
 layout_mode = 1
-anchors_preset = 4
+anchors_preset = 8
+anchor_left = 0.5
 anchor_top = 0.5
+anchor_right = 0.5
 anchor_bottom = 0.5
-offset_top = -30.0
-offset_right = 60.0
-offset_bottom = 30.0
+offset_left = -41.0
+offset_top = -41.0
+offset_right = 39.0
+offset_bottom = 39.0
+grow_horizontal = 2
 grow_vertical = 2
-texture = SubResource("AtlasTexture_6qbjf")
+texture = ExtResource("12_r2pc2")
 expand_mode = 1
 
-[node name="Label" type="Label" parent="CanvasLayer/UI/GoldContainer"]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 70.0
-offset_top = -33.0
-offset_right = 152.0
-offset_bottom = 34.0
-grow_vertical = 2
-text = "0
-"
-label_settings = SubResource("LabelSettings_fntp4")
+[node name="MarketRect" type="ColorRect" parent="CanvasLayer/UIMarginContainer/UI/BottomUI/NavBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+color = Color(0.98, 0.147, 0.35525, 1)
 
-[connection signal="pressed" from="CanvasLayer/UI/ActionPanel/Sack" to="." method="_on_plant_seeds_pressed"]
-[connection signal="pressed" from="CanvasLayer/UI/ActionPanel/Editor" to="." method="_on_editor_pressed"]
+[node name="MarketIcon" type="TextureRect" parent="CanvasLayer/UIMarginContainer/UI/BottomUI/NavBar/MarketRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -41.0
+offset_top = -41.0
+offset_right = 39.0
+offset_bottom = 39.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("13_846dd")
+expand_mode = 1
+
+[connection signal="pressed" from="CanvasLayer/UIMarginContainer/UI/BottomUI/MarginContainer/ActionBar/TileButton" to="." method="_on_tile_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UIMarginContainer/UI/BottomUI/MarginContainer/ActionBar/PlantButton" to="." method="_on_plant_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UIMarginContainer/UI/BottomUI/MarginContainer/ActionBar/DoneButton" to="." method="_on_done_button_pressed"]
