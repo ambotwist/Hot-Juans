@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=4 uid="uid://m5swovxkriso"]
+[gd_scene load_steps=27 format=4 uid="uid://m5swovxkriso"]
 
 [ext_resource type="Script" uid="uid://dy2aepvh7bevv" path="res://Scripts/camera.gd" id="1_aqxo0"]
 [ext_resource type="Script" uid="uid://sciqwoqrcqqy" path="res://Scripts/greenhouse.gd" id="1_gdbcm"]
@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://mko6njrqlh5e" path="res://Assets/Custom_Assets/Chili_IdleAnim.png" id="10_7a6jw"]
 [ext_resource type="Texture2D" uid="uid://c86w2d4aayt7i" path="res://Assets/Custom_Assets/flower_icon.webp" id="11_670mp"]
 [ext_resource type="Texture2D" uid="uid://blyyna8jmgove" path="res://Assets/Custom_Assets/hoe.png" id="11_wtr4s"]
+[ext_resource type="Script" uid="uid://cbfkd60qtncvi" path="res://Scripts/ui_button.gd" id="12_qyuhc"]
 [ext_resource type="Texture2D" uid="uid://nvkvcug7ck15" path="res://Assets/Custom_Assets/expedition_icon.png" id="12_r2pc2"]
 [ext_resource type="Texture2D" uid="uid://cnx1pqem2stqr" path="res://Assets/Custom_Assets/sack.png" id="12_rbn75"]
 [ext_resource type="Texture2D" uid="uid://d0t6rgcedtwgy" path="res://Assets/Custom_Assets/market-icon.png" id="13_846dd"]
@@ -185,6 +186,7 @@ script = ExtResource("8_bhnm8")
 
 [node name="UI" type="Control" parent="CanvasLayer/UIMarginContainer"]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="StatsMarginContainer" type="MarginContainer" parent="CanvasLayer/UIMarginContainer/UI"]
 custom_minimum_size = Vector2(300, 400)
@@ -245,6 +247,7 @@ anchor_bottom = 1.0
 offset_top = -250.0
 grow_horizontal = 2
 grow_vertical = 0
+mouse_filter = 2
 alignment = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/UIMarginContainer/UI/BottomUI"]
@@ -256,6 +259,7 @@ theme_override_constants/margin_bottom = 20
 [node name="ActionBar" type="HBoxContainer" parent="CanvasLayer/UIMarginContainer/UI/BottomUI/MarginContainer"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 40
 
 [node name="TileButton" type="TextureButton" parent="CanvasLayer/UIMarginContainer/UI/BottomUI/MarginContainer/ActionBar"]
@@ -264,6 +268,7 @@ layout_mode = 2
 texture_normal = ExtResource("11_wtr4s")
 ignore_texture_size = true
 stretch_mode = 4
+script = ExtResource("12_qyuhc")
 
 [node name="PlantButton" type="TextureButton" parent="CanvasLayer/UIMarginContainer/UI/BottomUI/MarginContainer/ActionBar"]
 custom_minimum_size = Vector2(100, 100)
@@ -271,6 +276,7 @@ layout_mode = 2
 texture_normal = ExtResource("12_rbn75")
 ignore_texture_size = true
 stretch_mode = 4
+script = ExtResource("12_qyuhc")
 
 [node name="EditButton" type="TextureButton" parent="CanvasLayer/UIMarginContainer/UI/BottomUI/MarginContainer/ActionBar"]
 custom_minimum_size = Vector2(100, 100)
@@ -278,6 +284,7 @@ layout_mode = 2
 texture_normal = ExtResource("13_qyuhc")
 ignore_texture_size = true
 stretch_mode = 4
+script = ExtResource("12_qyuhc")
 
 [node name="DoneButton" type="Button" parent="CanvasLayer/UIMarginContainer/UI/BottomUI/MarginContainer/ActionBar"]
 visible = false
@@ -286,6 +293,7 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 64
 disabled = true
 text = "DONE"
+script = ExtResource("12_qyuhc")
 
 [node name="NavBar" type="HBoxContainer" parent="CanvasLayer/UIMarginContainer/UI/BottomUI"]
 layout_mode = 2

@@ -67,7 +67,7 @@ func _ready():
 	done_button.disabled = true
 
 # Called whenever an event is registered
-func _input(event):
+func _unhandled_input(event):
 	if event is InputEventScreenTouch:
 		handle_touch(event)
 

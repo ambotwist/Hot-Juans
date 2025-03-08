@@ -22,7 +22,7 @@ func _ready():
 	zoom = Vector2(default_zoom, default_zoom)
 
 # Called whenever an event is registered
-func _input(event):
+func _unhandled_input(event):
 	# Touch
 	if event is InputEventScreenTouch:
 		handle_touch(event)
